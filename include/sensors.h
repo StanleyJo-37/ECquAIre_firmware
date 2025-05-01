@@ -1,5 +1,13 @@
 #pragma once
 
+enum class SensorType {
+  NPK,
+  PH,
+  MOISTURE,
+  LIGHT,
+  ELECTRIC_CONDUCTIVITY,
+};
+
 enum class SensorStatus {
   NOT_FOUND,
   TIMEOUT,
@@ -12,11 +20,4 @@ enum class TelemetrySendStatus {
   TIMEOUT,
   EMPTY,
   SUCCESS,
-};
-
-enum class ActuatorStatus {
-  NOT_FOUND,
-  TIMEOUT,
-  ERROR,
-  OK,
 };
