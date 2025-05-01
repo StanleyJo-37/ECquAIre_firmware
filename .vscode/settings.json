@@ -2,6 +2,29 @@
   "files.associations": {
     "*.css": "css",
     "css": "css",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "type_traits": "cpp",
+    "array": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "span": "cpp",
+    "deque": "cpp",
+    "vector": "cpp",
+    "atomic": "cpp",
+    "unordered_map": "cpp",
+    "iterator": "cpp",
+    "memory_resource": "cpp",
+    "optional": "cpp",
+    "format": "cpp",
+    "istream": "cpp",
+    "new": "cpp",
+    "ostream": "cpp",
+    "sstream": "cpp",
+    "stdexcept": "cpp",
+    "streambuf": "cpp",
+    "system_error": "cpp",
+    "functional": "cpp",
+    "tuple": "cpp",
+    "variant": "cpp"
   }
 }
