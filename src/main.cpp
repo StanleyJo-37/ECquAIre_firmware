@@ -1,4 +1,6 @@
 #include <iostream>
+#include "Sensor.h"
+#include "telemetry.h"
 
 extern "C" {
   #include "freertos/FreeRTOS.h"
@@ -8,11 +10,26 @@ extern "C" {
   #include "esp_http_server.h"
 }
 
+volatile Telemetry telemetry = Telemetry();
+
+volatile bool do_read_sensors = false;
+volatile unsigned int sensor_reading_interval = 1;
+volatile bool do_capture_frames = false;
+volatile unsigned int frames_capturing_interval = 1;
+
 void read_sensors(void *params) {
-  while (true) {
+  while (do_read_sensors) {
     ESP_LOGI("Main", "[Automated]: Reading Sensors...");
 
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    vTaskDelay(pdMS_TO_TICKS(sensor_reading_interval * 1000));
+  }
+}
+
+void capture_frames(void *params) {
+  while (do_capture_frames) {
+    ESP_LOGI("Main", "[Automated]: Capturing frames...");
+
+    vTaskDelay(pdMS_TO_TICKS(frames_capturing_interval * 1000));
   }
 }
 
