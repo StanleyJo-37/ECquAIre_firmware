@@ -14,6 +14,62 @@ SafeVector<T>::~SafeVector() noexcept
 }
 
 template <typename T>
+SafeVector<T>::SafeVector(const SafeVector<T> &other) noexcept
+  : strict(other.strict), size(other.size), capacity(other.capacity)
+{
+  this->data = new T[other.capacity];
+  copy(other.data, other.data + other.size, this->data);
+}
+
+template <typename T>
+SafeVector<T>::SafeVector(SafeVector<T> &&other) noexcept
+  : strict(other.strict), size(other.size), capacity(other.capacity), data(other.data)
+{
+  other.data = nullptr;
+  other.size = 0;
+  other.capacity = 0;
+}
+
+template <typename T>
+SafeVector<T> &SafeVector<T>::operator=(const SafeVector<T> &other) noexcept
+{
+  if (this != &other) {
+    this->data = new T[other.capacity];
+    copy(other.data, other.data + other.size, this->data);
+  }
+
+  return *this;
+}
+
+template <typename T>
+SafeVector<T> &SafeVector<T>::operator=(SafeVector<T> &&other) noexcept
+{
+  if (this != &other) {
+    delete[] this->data;
+
+    this->data = other.data;
+    this->size = other.size;
+    this->capacity = other.capacity;
+    this->strict = other.strict;
+
+    other.data = nullptr;
+    other.size = 0;
+    other.capacity = 0;
+  }
+
+  return *this;
+}
+
+template <typename T>
+T *SafeVector<T>::operator[](size_t index) noexcept
+{
+  if (index >= size) {
+    throw out_of_range("Accessing out of range index.");
+  } 
+  return &this->data[index];
+}
+
+template <typename T>
 bool SafeVector<T>::add(const T &value) noexcept
 {
   if (this->size < this->capacity) {
@@ -33,7 +89,7 @@ bool SafeVector<T>::add(const T &value) noexcept
 template <typename T>
 bool SafeVector<T>::remove(const size_t index, int length) noexcept
 {
-  if (index > this->capacity) {
+  if (index > this->size) {
     return false;
   }
 
@@ -61,7 +117,7 @@ size_t SafeVector<T>::shrink_to_fit() noexcept
 
   int old_capacity = this->capacity;
 
-  T *newData = new T[this->size]();
+  T *newData = new T[this->size];
   copy(this->data, this->data + this->size, newData);
 
   delete[] this->data;
