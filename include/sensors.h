@@ -15,7 +15,7 @@ enum class SensorStatus {
   OK,
 };
 
-enum class TelemetrySendStatus {
+enum class TelemetryAssignmentStatus {
   NOT_FOUND,
   TIMEOUT,
   EMPTY,
