@@ -1,6 +1,6 @@
 #pragma once
 
-enum class SensorType {
+enum class SENSOR_TYPE {
   NPK,
   PH,
   MOISTURE,
@@ -8,14 +8,14 @@ enum class SensorType {
   ELECTRIC_CONDUCTIVITY,
 };
 
-enum class SensorStatus {
+enum class SENSOR_STATUS {
   NOT_FOUND,
   TIMEOUT,
   ERROR,
   OK,
 };
 
-enum class TelemetryAssignmentStatus {
+enum class TELEMETRY_ASSIGNMENT_STATUS {
   NOT_FOUND,
   TIMEOUT,
   EMPTY,

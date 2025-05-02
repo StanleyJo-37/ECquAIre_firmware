@@ -1,3 +1,5 @@
+#pragma once
+
 enum class ActuratorType {
   WATERING,
   PESTISIDE,

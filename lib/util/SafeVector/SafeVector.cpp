@@ -1,4 +1,4 @@
-#include "SafeVector.h"
+#include "SafeVector.hpp"
 
 template <typename T>
 inline SafeVector<T>::SafeVector(size_t size, T *data, bool strict) noexcept
