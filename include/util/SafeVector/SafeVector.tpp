@@ -1,10 +1,17 @@
 #include "SafeVector.hpp"
 
 template <typename T>
-inline SafeVector<T>::SafeVector(size_t size, T *data, bool strict) noexcept
-  : size(size), data(data), strict(strict), capacity(size)
+inline SafeVector<T>::SafeVector(T *data, bool strict, size_t size) noexcept
+  : data(data), strict(strict), size(size), capacity(size)
 {
   reserve(size);
+  if (data != nullptr) {
+    copy(data, data + size, this->data);
+  }
+  else {
+    fill_n(this->data, size, T{});
+  }
+
 }
 
 template <typename T>
@@ -25,17 +32,20 @@ template <typename T>
 SafeVector<T>::SafeVector(SafeVector<T> &&other) noexcept
   : strict(other.strict), size(other.size), capacity(other.capacity), data(other.data)
 {
-  other.data = nullptr;
-  other.size = 0;
-  other.capacity = 0;
+  reset(other);
 }
 
 template <typename T>
 SafeVector<T> &SafeVector<T>::operator=(const SafeVector<T> &other) noexcept
 {
   if (this != &other) {
+    delete[] this->data;
     this->data = new T[other.capacity];
     copy(other.data, other.data + other.size, this->data);
+
+    this->size = other.size;
+    this->capacity = other.capacity;
+    this->strict = other.strict;
   }
 
   return *this;
@@ -52,21 +62,19 @@ SafeVector<T> &SafeVector<T>::operator=(SafeVector<T> &&other) noexcept
     this->capacity = other.capacity;
     this->strict = other.strict;
 
-    other.data = nullptr;
-    other.size = 0;
-    other.capacity = 0;
+    reset(other);
   }
 
   return *this;
 }
 
 template <typename T>
-T *SafeVector<T>::operator[](size_t index) noexcept
+T& SafeVector<T>::operator[](size_t index)
 {
-  if (index >= size) {
+  if (!data || index >= size) {
     throw out_of_range("Accessing out of range index.");
   } 
-  return &this->data[index];
+  return this->data[index];
 }
 
 template <typename T>
@@ -89,13 +97,13 @@ bool SafeVector<T>::add(const T &value) noexcept
 template <typename T>
 bool SafeVector<T>::remove(const size_t index, int length) noexcept
 {
-  if (index > this->size) {
+  if (index > this->size || index + length > this->size) {
     return false;
   }
 
   copy(&this->data[index + length], &this->data[this->size], &this->data[index]);
 
-  this->size -= 1;
+  this->size -= length;
 
   return true;
 }
@@ -103,7 +111,7 @@ bool SafeVector<T>::remove(const size_t index, int length) noexcept
 template <typename T>
 bool SafeVector<T>::replace(const size_t index, const T &value) noexcept
 {
-  if (index < capacity) {
+  if (index < size) {
     this->data[index] = value;
     return true;
   }
