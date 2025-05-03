@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <array>
 #include <string>
-#include "SafeVector.hpp"
+#include "util/SafeVector/SafeVector.hpp"
 
 using std::unordered_map;
 using std::tuple;
@@ -19,7 +19,6 @@ using pin_status = tuple<bool, bool, void*>; // (in_use, strict, assigner)
 constexpr unsigned short GPIO_COUNT = 39;
 unordered_map<gpio_num_t, pin_status> allocated_gpios;
 
-template<size_t size>
 class GPIOGroup {
   public:
     GPIOGroup() noexcept = default;
@@ -51,5 +50,3 @@ class GPIOGroup {
     gpio_int_type_t intr_type;
     bool strict;
 };
-
-#include "GPIOGroup.tpp"

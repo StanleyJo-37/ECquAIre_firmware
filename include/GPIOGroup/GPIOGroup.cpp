@@ -1,20 +1,17 @@
 #include "GPIOGroup.hpp"
 
-template<size_t size>
-GPIOGroup<size>::~GPIOGroup() noexcept
+GPIOGroup::~GPIOGroup() noexcept
 {
   this->unregister();
 }
 
-template <size_t size>
-bool GPIOGroup<size>::gpio_used(const gpio_num_t &gpio_num) noexcept
+bool GPIOGroup::gpio_used(const gpio_num_t &gpio_num) noexcept
 {
   const auto it = allocated_gpios.find(gpio_num);
   return it != allocated_gpios.end() && std::get<0>(it->second);
 }
 
-template <size_t size>
-bool GPIOGroup<size>::can_be_replaced(const gpio_num_t &gpio_num, void *curr) noexcept
+bool GPIOGroup::can_be_replaced(const gpio_num_t &gpio_num, void *curr) noexcept
 {
   const auto it = allocated_gpios.find(gpio_num);
   if (it == allocated_gpios.end()) return true;
@@ -26,16 +23,15 @@ bool GPIOGroup<size>::can_be_replaced(const gpio_num_t &gpio_num, void *curr) no
   return (!in_use && !is_strict) || assigner == curr;
 }
 
-template <size_t size>
-esp_err_t GPIOGroup<size>::init() noexcept
+esp_err_t GPIOGroup::init() noexcept
 {
   gpio_config_t io_conf = {};
 
   io_conf.pin_bit_mask = [&]() { 
     uint64_t bit_mask = 0;
-    for (int i = 0; i < size; ++i) {
-      if (can_be_replaced(gpio_nums[i], (void*)this)) {
-        bit_mask |= (1ULL << gpio_nums[i]);
+    for (int i = 0; i < this->gpio_nums.get_size(); ++i) {
+      if (can_be_replaced(this->gpio_nums[i], (void*)this)) {
+        bit_mask |= (1ULL << this->gpio_nums[i]);
         allocated_gpios[gpio_nums[i]] = tuple(true, strict, (void*)this);
       }
     }
@@ -55,13 +51,12 @@ esp_err_t GPIOGroup<size>::init() noexcept
 }
 
 
-template <size_t size>
-esp_err_t GPIOGroup<size>::unregister() noexcept
+esp_err_t GPIOGroup::unregister() noexcept
 {
-  for (int i = 0; i < size; ++i) {
-    if (can_be_replaced(gpio_nums[i], (void*)this)) {
-      gpio_reset_pin(gpio_nums[i]);
-      allocated_gpios[gpio_nums[i]] = tuple(false, strict, (void*)nullptr);
+  for (int i = 0; i < this->gpio_nums.get_size(); ++i) {
+    if (can_be_replaced(this->gpio_nums[i], (void*)this)) {
+      gpio_reset_pin(this->gpio_nums[i]);
+      allocated_gpios[this->gpio_nums[i]] = tuple(false, strict, (void*)nullptr);
     }
   }
 
