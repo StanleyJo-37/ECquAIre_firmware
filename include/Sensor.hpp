@@ -3,7 +3,7 @@
 #include "sensors.hpp"
 #include "telemetry.hpp"
 #include "GPIOGroup/GPIOGroup.hpp"
-#include "SafeVector.hpp"
+#include "util/SafeVector/SafeVector.hpp"
 #include <string>
 
 using std::string;
